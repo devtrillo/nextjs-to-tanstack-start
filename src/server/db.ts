@@ -1,23 +1,4 @@
-import { z } from 'zod'
-
-export const statuses = ['open', 'in-progress', 'closed'] as const
-export type Status = (typeof statuses)[number]
-
-export type Issue = {
-  id: number
-  title: string
-  status: Status
-  author: string
-  createdAt: string
-}
-
-export const issueSearch = z.object({
-  status: z.enum(['all', ...statuses]).catch('all'),
-  sort: z.enum(['newest', 'oldest']).catch('newest'),
-})
-export type IssueSearch = z.infer<typeof issueSearch>
-
-export const newIssue = z.object({ title: z.string().trim().min(3).max(120) })
+import { statuses, type Issue, type IssueSearch, type Status } from '~/issues'
 
 // In memory on purpose: the post is about the framework, not the database.
 // It resets on restart, and on Workers each isolate has its own copy.
