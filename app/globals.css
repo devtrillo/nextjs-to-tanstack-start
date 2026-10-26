@@ -1,0 +1,6 @@
+body { font-family: system-ui, sans-serif; max-width: 42rem; margin: 2rem auto; padding: 0 1rem; line-height: 1.5; }
+ul { padding: 0; list-style: none; }
+li { padding: 0.5rem 0; border-bottom: 1px solid #ddd; }
+form { display: flex; gap: 0.5rem; margin: 1rem 0; }
+.stats { display: flex; gap: 1rem; color: #555; }
+.error { color: #b00; }
