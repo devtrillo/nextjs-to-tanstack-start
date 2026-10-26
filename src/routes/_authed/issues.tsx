@@ -3,26 +3,26 @@ import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { useServerFn } from '@tanstack/react-start'
 import { issueSearch } from '~/issues'
 import { createIssue, getIssues } from '~/server/issues'
+import { getStats } from '~/server/stats'
 
 export const Route = createFileRoute('/_authed/issues')({
   validateSearch: issueSearch,
   loaderDeps: ({ search: { status, sort } }) => ({ status, sort }),
-  loader: ({ deps }) => getIssues({ data: deps }),
+  loader: async ({ deps }) => {
+    const [issues, { Stats }] = await Promise.all([getIssues({ data: deps }), getStats()])
+    return { issues, Stats }
+  },
   component: IssuesPage,
 })
 
 function IssuesPage() {
   const { user } = Route.useRouteContext()
-  const { issues, stats } = Route.useLoaderData()
+  const { issues, Stats } = Route.useLoaderData()
   return (
     <main>
       <h1>Issues</h1>
       <p>Signed in as {user}</p>
-      <p className="stats">
-        <span>{stats.open} open</span>
-        <span>{stats['in-progress']} in progress</span>
-        <span>{stats.closed} closed</span>
-      </p>
+      {Stats}
       <Filters />
       <NewIssueForm />
       <ul>
