@@ -4,7 +4,7 @@ import { useServerFn } from '@tanstack/react-start'
 import { issueSearch } from '~/issues'
 import { createIssue, getIssues } from '~/server/issues'
 
-export const Route = createFileRoute('/issues')({
+export const Route = createFileRoute('/_authed/issues')({
   validateSearch: issueSearch,
   loaderDeps: ({ search: { status, sort } }) => ({ status, sort }),
   loader: ({ deps }) => getIssues({ data: deps }),
@@ -12,7 +12,8 @@ export const Route = createFileRoute('/issues')({
 })
 
 function IssuesPage() {
-  const { user, issues, stats } = Route.useLoaderData()
+  const { user } = Route.useRouteContext()
+  const { issues, stats } = Route.useLoaderData()
   return (
     <main>
       <h1>Issues</h1>

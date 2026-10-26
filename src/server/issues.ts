@@ -1,24 +1,16 @@
-import { redirect } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { issueSearch, newIssue } from '~/issues'
+import { authMiddleware } from './auth'
 import { createIssue as insertIssue, issueStats, listIssues } from './db'
-import { readUser } from './session'
-
-function requireUser() {
-  const user = readUser()
-  if (!user) throw redirect({ to: '/login' })
-  return user
-}
 
 export const getIssues = createServerFn()
+  .middleware([authMiddleware])
   .validator(issueSearch)
-  .handler(({ data }) => {
-    const user = requireUser()
-    return { user, issues: listIssues(data), stats: issueStats() }
-  })
+  .handler(({ data }) => ({ issues: listIssues(data), stats: issueStats() }))
 
 export const createIssue = createServerFn({ method: 'POST' })
+  .middleware([authMiddleware])
   .validator(newIssue)
-  .handler(({ data }) => {
-    insertIssue(data.title, requireUser())
+  .handler(({ data, context }) => {
+    insertIssue(data.title, context.user)
   })
